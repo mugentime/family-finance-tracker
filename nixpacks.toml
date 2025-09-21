@@ -5,7 +5,7 @@ nixPkgs = ["nodejs-20_x"]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["echo 'Skipping build for test'"]
+cmds = ["npm run compile"]
 
 [phases.start]
 cmd = "node test.js"
