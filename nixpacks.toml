@@ -1,15 +1,8 @@
-[variables]
-NODE_VERSION = "20"
-NIXPACKS_NODE_VERSION = "20"
-
-[phases.setup]
-nixPkgs = ["nodejs_20", "npm-9_x", "openssl"]
-
-[phases.install]
-cmds = ["npm ci"]
-
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["npm ci", "npx tsc", "npm run build"]
 
-[start]
+[phases.start]
 cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"
