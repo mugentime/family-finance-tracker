@@ -8,7 +8,7 @@
     "build": "vite build",
     "start": "node server.js",
     "preview": "vite preview",
-    "postinstall": "npm run db:migrate && npm run build",
+    "postinstall": "npx tsc && npm run db:migrate && npm run build",
     "lint": "echo 'Linting completed'",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate:pg",
