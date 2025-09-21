@@ -9,12 +9,11 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npx tsc && vite build",
     "start": "node server.js",
     "preview": "vite preview",
     "db:migrate": "drizzle-kit migrate",
-    "compile": "npx tsc",
-    "postinstall": "npm run compile && npm run build"
+    "compile": "npx tsc"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",
