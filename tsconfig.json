@@ -18,7 +18,8 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "outDir": ".",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
@@ -26,12 +27,14 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "database/**/*.ts",
+    "services/**/*.ts",
+    "hooks/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "server.js"
+    "server.js",
+    "**/*.tsx"
   ]
 }

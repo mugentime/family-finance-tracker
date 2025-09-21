@@ -7,7 +7,11 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm run build:*)",
       "Bash(curl:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
