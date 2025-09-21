@@ -5,10 +5,10 @@ nixPkgs = ["nodejs-20_x"]
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npx tsc", "npx vite build"]
+cmds = ["echo 'Skipping build for test'"]
 
 [phases.start]
-cmd = "node server.js"
+cmd = "node test.js"
 
 [variables]
 NODE_ENV = "production"
