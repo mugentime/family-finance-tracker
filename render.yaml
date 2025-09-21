@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: family-finance-tracker
+    env: node
+    plan: starter
+    region: oregon
+    buildCommand: npm ci && npm run compile && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_KEY
+        value: AIzaSyCDQmAxiCI_mzi8jtjOspqO3zq1QDi0a0g
+      - key: GEMINI_API_KEY
+        value: AIzaSyCDQmAxiCI_mzi8jtjOspqO3zq1QDi0a0g
+      - key: TELEGRAM_BOT_TOKEN
+        value: 7467500074:AAEdbtquadLIqPhI3ExU429AlUA9xboc7Lw
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: family-finance-db
+          property: connectionString
+    autoDeploy: true
+
+databases:
+  - name: family-finance-db
+    databaseName: family_finance_tracker
+    user: finance_user
+    plan: starter
+    region: oregon
