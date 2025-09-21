@@ -7,13 +7,15 @@ export const generateDescription = async (productName, keywords) => {
         });
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+            const typedErrorData = errorData;
             if (process.env.NODE_ENV !== 'production') {
-                console.error("API Error:", errorData.error);
+                console.error("API Error:", typedErrorData.error);
             }
-            throw new Error(errorData.error || 'Server error');
+            throw new Error(typedErrorData.error || 'Server error');
         }
         const data = await response.json();
-        return data.description || getFallbackDescription(productName, keywords);
+        const typedData = data;
+        return typedData.description || getFallbackDescription(productName, keywords);
     }
     catch (error) {
         if (process.env.NODE_ENV !== 'production') {
@@ -35,13 +37,15 @@ export const generateImage = async (productName) => {
         });
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+            const typedErrorData = errorData;
             if (process.env.NODE_ENV !== 'production') {
-                console.error("API Error:", errorData.error);
+                console.error("API Error:", typedErrorData.error);
             }
-            throw new Error(errorData.error || 'Server error');
+            throw new Error(typedErrorData.error || 'Server error');
         }
         const data = await response.json();
-        return data.imageUrl || getFallbackImage(productName);
+        const typedData = data;
+        return typedData.imageUrl || getFallbackImage(productName);
     }
     catch (error) {
         if (process.env.NODE_ENV !== 'production') {

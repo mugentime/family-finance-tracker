@@ -7,15 +7,17 @@ export const generateDescription = async (productName: string, keywords: string)
     });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Server error' })) as { error?: string };
+        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+        const typedErrorData = errorData as { error?: string };
         if (process.env.NODE_ENV !== 'production') {
-            console.error("API Error:", errorData.error);
+            console.error("API Error:", typedErrorData.error);
         }
-        throw new Error(errorData.error || 'Server error');
+        throw new Error(typedErrorData.error || 'Server error');
     }
 
-    const data = await response.json() as { description?: string };
-    return data.description || getFallbackDescription(productName, keywords);
+    const data = await response.json();
+    const typedData = data as { description?: string };
+    return typedData.description || getFallbackDescription(productName, keywords);
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
         console.error("Error fetching description:", error);
@@ -38,15 +40,17 @@ export const generateImage = async (productName: string): Promise<string> => {
     });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Server error' })) as { error?: string };
+        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+        const typedErrorData = errorData as { error?: string };
         if (process.env.NODE_ENV !== 'production') {
-            console.error("API Error:", errorData.error);
+            console.error("API Error:", typedErrorData.error);
         }
-        throw new Error(errorData.error || 'Server error');
+        throw new Error(typedErrorData.error || 'Server error');
     }
 
-    const data = await response.json() as { imageUrl?: string };
-    return data.imageUrl || getFallbackImage(productName);
+    const data = await response.json();
+    const typedData = data as { imageUrl?: string };
+    return typedData.imageUrl || getFallbackImage(productName);
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
         console.error("Error fetching image:", error);

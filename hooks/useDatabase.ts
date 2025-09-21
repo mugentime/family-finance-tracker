@@ -21,8 +21,8 @@ function useDatabase<T>(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json() as T;
-      setData(result);
+      const result = await response.json();
+      setData(result as T);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       if (process.env.NODE_ENV !== 'production') {
@@ -51,8 +51,8 @@ function useDatabase<T>(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json() as T;
-      setData(result);
+      const result = await response.json();
+      setData(result as T);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       if (process.env.NODE_ENV !== 'production') {

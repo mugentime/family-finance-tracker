@@ -1,6 +1,13 @@
 
 import { useState, useEffect } from 'react';
 
+// Type declaration for window object (SSR compatibility)
+declare global {
+  interface Window {
+    localStorage: Storage;
+  }
+}
+
 function useLocalStorage<T,>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
