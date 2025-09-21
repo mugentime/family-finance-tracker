@@ -47,11 +47,11 @@ const DashboardScreen: React.FC = () => {
 
     return (
         <div>
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-slate-800">Dashboard</h1>
-                <p className="text-slate-600">Resumen financiero de este mes.</p>
+            <div className="mb-4 sm:mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Dashboard</h1>
+                <p className="text-sm sm:text-base text-slate-600">Resumen financiero de este mes.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <StatCard 
                     title="Ingresos del Mes" 
                     value={`$${thisMonthStats.income.toFixed(2)}`}
@@ -68,14 +68,14 @@ const DashboardScreen: React.FC = () => {
                     icon={<BudgetIcon className="h-6 w-6 text-sky-600" />}
                 />
             </div>
-            <div className="mt-8 bg-white p-6 rounded-3xl shadow-md">
-                <h2 className="text-xl font-bold text-slate-800 mb-4">Principales Gastos del Mes</h2>
+            <div className="mt-6 sm:mt-8 bg-white p-4 sm:p-6 rounded-3xl shadow-md mobile-spacing">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800 mb-3 sm:mb-4">Principales Gastos del Mes</h2>
                 {thisMonthStats.topSpendingCategories.length > 0 ? (
                     <ul className="space-y-3">
                         {thisMonthStats.topSpendingCategories.map((cat, index) => (
-                            <li key={index} className="flex justify-between items-center text-sm p-2 rounded-md even:bg-slate-50">
-                                <span className="font-medium text-slate-700">{index + 1}. {cat.name}</span>
-                                <span className="font-bold text-slate-800 bg-slate-200 px-2 py-0.5 rounded-full">${cat.amount.toFixed(2)}</span>
+                            <li key={index} className="flex justify-between items-center text-xs sm:text-sm p-3 rounded-lg even:bg-slate-50">
+                                <span className="font-medium text-slate-700 truncate pr-2">{index + 1}. {cat.name}</span>
+                                <span className="font-bold text-slate-800 bg-slate-200 px-2 py-1 rounded-full text-xs flex-shrink-0">${cat.amount.toFixed(2)}</span>
                             </li>
                         ))}
                     </ul>

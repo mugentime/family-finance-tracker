@@ -168,14 +168,14 @@ const TransactionsScreen: React.FC = () => {
                 refreshKey={refreshKey}
             />
         )}
-      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
-        <h1 className="text-3xl font-bold text-slate-800">Transacciones</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Transacciones</h1>
         <button
           onClick={() => openModal()}
-          className="flex items-center px-4 py-2 bg-zinc-900 text-white rounded-xl shadow-sm hover:bg-zinc-800 transition-colors"
+          className="flex items-center justify-center px-4 py-3 min-h-[48px] bg-zinc-900 text-white rounded-xl shadow-sm hover:bg-zinc-800 active:bg-zinc-700 transition-colors touch-target"
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Nueva Transacción
+          <span className="text-sm sm:text-base">Nueva Transacción</span>
         </button>
       </div>
 
@@ -254,10 +254,10 @@ const TransactionsScreen: React.FC = () => {
                         <div className="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
                             <p>{new Date(t.date).toLocaleDateString()}{member ? ` por ${member.username}` : ''}</p>
                             <div className="flex items-center space-x-1">
-                                <button onClick={() => openModal(t)} className="p-2 text-slate-500 hover:text-zinc-700 rounded-full hover:bg-slate-100">
+                                <button onClick={() => openModal(t)} className="p-3 min-h-[44px] min-w-[44px] text-slate-500 hover:text-zinc-700 rounded-full hover:bg-slate-100 active:bg-slate-200 touch-target">
                                     <EditIcon className="h-4 w-4" />
                                 </button>
-                                <button onClick={() => deleteTransaction(t.id)} className="p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100">
+                                <button onClick={() => deleteTransaction(t.id)} className="p-3 min-h-[44px] min-w-[44px] text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100 active:bg-red-50 touch-target">
                                     <TrashIcon className="h-4 w-4" />
                                 </button>
                             </div>

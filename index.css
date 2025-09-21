@@ -109,4 +109,76 @@ textarea:focus {
     font-size: 14px;
     line-height: 1.4;
   }
+
+  /* Touch-friendly buttons */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Larger touch targets for small buttons */
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px;
+  }
+
+  /* Improved text readability */
+  body {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Better spacing for mobile */
+  .mobile-spacing {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Optimized form inputs */
+  input, select, textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px;
+    padding: 12px;
+  }
+
+  /* Better scrolling performance */
+  .scroll-smooth {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-optimized {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  button {
+    min-height: 40px;
+    min-width: 40px;
+  }
+}
+
+/* Enhanced touch interactions */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device specific styles */
+  .hover\:bg-slate-100:hover {
+    background-color: rgb(241 245 249);
+  }
+
+  .hover\:text-zinc-700:hover {
+    color: rgb(63 63 70);
+  }
+
+  /* Remove hover effects on touch devices */
+  .btn-hover:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .card-hover:hover {
+    transform: none;
+    box-shadow: none;
+  }
 }

@@ -14,18 +14,20 @@ const NavItem: React.FC<{
     isActive: boolean;
     onClick: () => void;
 }> = ({ icon, label, isActive, onClick }) => {
-    const baseClasses = "relative flex flex-col items-center justify-center text-center w-full h-full p-1 transition-all duration-300 transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-2xl";
+    const baseClasses = "relative flex flex-col items-center justify-center text-center w-full h-full p-2 min-h-[48px] touch-target transition-all duration-300 transform focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-2xl";
     const activeClasses = "text-zinc-900 bg-white/95 scale-110 shadow-lg";
-    const inactiveClasses = "text-gray-400 hover:text-white";
-    
+    const inactiveClasses = "text-gray-400 hover:text-white active:bg-white/20";
+
     return (
         <button
             onClick={onClick}
             className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
             aria-label={label}
         >
-            {icon}
-            <span className="text-xs mt-1">{label}</span>
+            <div className="flex flex-col items-center">
+                {icon}
+                <span className="text-xs mt-1 leading-tight">{label}</span>
+            </div>
         </button>
     );
 };
