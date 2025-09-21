@@ -11,7 +11,10 @@
     "dev": "vite",
     "build": "vite build",
     "start": "node server.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:migrate": "drizzle-kit migrate",
+    "compile": "npx tsc",
+    "postinstall": "npm run compile && npm run build"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",

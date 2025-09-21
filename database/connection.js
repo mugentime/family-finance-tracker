@@ -7,15 +7,16 @@ const getPoolConfig = () => {
     const config = {
         connectionString: process.env.DATABASE_URL,
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-        max: process.env.NODE_ENV === 'production' ? 10 : 20,
-        min: 1,
+        max: process.env.NODE_ENV === 'production' ? 5 : 20,
+        min: 0,
         idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 10000,
-        acquireTimeoutMillis: 60000,
-        createTimeoutMillis: 30000,
+        connectionTimeoutMillis: 15000,
+        acquireTimeoutMillis: 30000,
+        createTimeoutMillis: 15000,
         destroyTimeoutMillis: 5000,
         reapIntervalMillis: 1000,
-        createRetryIntervalMillis: 200,
+        createRetryIntervalMillis: 500,
+        allowExitOnIdle: true,
     };
 
     if (!config.connectionString) {
@@ -101,15 +102,23 @@ export const db = new Proxy({}, {
     }
 });
 
-// Enhanced connection test with retry logic
-export const testConnection = async (retries = 3) => {
+// Enhanced connection test with retry logic and Railway optimizations
+export const testConnection = async (retries = 5) => {
     let attempt = 0;
 
     while (attempt < retries) {
         try {
             connectionAttempts++;
             const pool = await getPool();
-            const client = await pool.connect();
+
+            // Test with timeout for Railway deployment
+            const client = await Promise.race([
+                pool.connect(),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Connection timeout')), 15000)
+                )
+            ]);
+
             await client.query('SELECT 1');
             client.release();
 
@@ -122,13 +131,12 @@ export const testConnection = async (retries = 3) => {
             attempt++;
             connectionAttempts++;
 
-            if (process.env.NODE_ENV !== 'production') {
-                console.warn(`Database connection attempt ${attempt}/${retries} failed:`, error.message);
-            }
+            console.warn(`Database connection attempt ${attempt}/${retries} failed:`, error.message);
 
             if (attempt < retries) {
-                // Wait before retry with exponential backoff
-                await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                // Wait before retry with exponential backoff (max 10 seconds)
+                const delay = Math.min(Math.pow(2, attempt) * 1000, 10000);
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
         }
     }
