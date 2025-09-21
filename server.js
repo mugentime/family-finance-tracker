@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Database imports
-import { testConnection, closeConnection } from './database/connection.js';
+import { testConnection, closeConnection, getDatabaseHealth } from './database/connection.js';
 import {
   MembersService,
   CategoriesService,
@@ -248,12 +248,28 @@ app.post('/api/confirm-transaction', (req, res) => {
 
 // Health check endpoint for Railway
 app.get('/health', async (req, res) => {
-    const dbHealthy = await testConnection();
-    res.status(200).json({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        database: dbHealthy ? 'connected' : 'disconnected'
-    });
+    try {
+        const dbHealth = await getDatabaseHealth();
+        const isHealthy = dbHealth.status === 'healthy';
+
+        res.status(isHealthy ? 200 : 503).json({
+            status: isHealthy ? 'OK' : 'DEGRADED',
+            timestamp: new Date().toISOString(),
+            database: dbHealth,
+            uptime: process.uptime(),
+            memory: process.memoryUsage(),
+            version: process.version
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'ERROR',
+            timestamp: new Date().toISOString(),
+            database: { status: 'unhealthy', error: error.message },
+            uptime: process.uptime(),
+            memory: process.memoryUsage(),
+            version: process.version
+        });
+    }
 });
 
 // Database API endpoints

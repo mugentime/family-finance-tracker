@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -19,22 +19,28 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-    "outDir": ".",
+    "outDir": "./dist/types",
+    "rootDir": ".",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "allowImportingTsExtensions": false,
+    "verbatimModuleSyntax": false
   },
   "include": [
     "database/**/*.ts",
     "services/**/*.ts",
-    "hooks/**/*.ts"
+    "hooks/**/*.ts",
+    "types.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "server.js",
-    "**/*.tsx"
+    "**/*.tsx",
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }
