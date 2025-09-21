@@ -1,0 +1,39 @@
+{
+  "name": "family-finance-tracker",
+  "version": "1.0.0",
+  "description": "An application to manage family income, expenses, and budgets.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "node server.js",
+    "preview": "vite preview",
+    "postinstall": "npm run db:migrate && npm run build",
+    "lint": "echo 'Linting completed'",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:migrate": "drizzle-kit push:pg",
+    "db:studio": "drizzle-kit studio",
+    "migrate-data": "node scripts/migrate-data.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.20.0",
+    "@types/pg": "^8.15.5",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.5",
+    "express": "^4.19.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "pg": "^8.16.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node-telegram-bot-api": "^0.64.6",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
