@@ -19,7 +19,7 @@ import {
 } from './services/databaseService.js';
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8080;
 const host = process.env.HOST || '0.0.0.0';
 
 // Increased body limit to handle base64 images from frontend
@@ -455,28 +455,25 @@ app.get('*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
-    // Test database connection
-    const dbConnected = await testConnection();
-    if (!dbConnected) {
-      console.error('Failed to connect to database');
-      if (process.env.NODE_ENV === 'production') {
-        process.exit(1);
-      }
-    } else {
-      // Initialize database with seed data
-      await DatabaseService.initializeData();
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Database initialized successfully');
-      }
-    }
-
-    // Start server
+    // Start server first for Railway health checks
     const server = app.listen(port, host, () => {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(`Servidor y bot de Telegram escuchando en ${host}:${port}`);
-        console.log(`Database status: ${dbConnected ? 'connected' : 'disconnected'}`);
-      }
+      console.log(`Server listening on ${host}:${port}`);
     });
+
+    // Initialize database asynchronously after server starts
+    setTimeout(async () => {
+      try {
+        const dbConnected = await testConnection();
+        if (dbConnected) {
+          await DatabaseService.initializeData();
+          console.log('Database initialized successfully');
+        } else {
+          console.warn('Database connection failed - running without database');
+        }
+      } catch (error) {
+        console.error('Database initialization error:', error.message);
+      }
+    }, 1000);
 
     // Graceful shutdown handling
     process.on('SIGTERM', async () => {
