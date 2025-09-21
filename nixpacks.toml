@@ -5,10 +5,10 @@ NODE_VERSION = "20"
 nixPkgs = ["nodejs_20", "npm-9_x", "openssl"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm ci --production=false"]
 
 [phases.build]
-cmds = ["npm run railway:deploy"]
+cmds = ["npm run compile", "npm run build"]
 
 [start]
-cmd = "npm run start"
+cmd = "npm start"
