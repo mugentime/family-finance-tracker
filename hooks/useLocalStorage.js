@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 function useLocalStorage(key, initialValue) {
     const [storedValue, setStoredValue] = useState(() => {
         try {
-            const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
+            if (typeof window !== 'undefined') {
+                const item = window.localStorage.getItem(key);
+                return item ? JSON.parse(item) : initialValue;
+            }
+            return initialValue;
         }
         catch (error) {
             console.error(error);
@@ -14,7 +17,9 @@ function useLocalStorage(key, initialValue) {
         try {
             const valueToStore = value instanceof Function ? value(storedValue) : value;
             setStoredValue(valueToStore);
-            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+            if (typeof window !== 'undefined') {
+                window.localStorage.setItem(key, JSON.stringify(valueToStore));
+            }
         }
         catch (error) {
             console.error(error);
@@ -22,9 +27,11 @@ function useLocalStorage(key, initialValue) {
     };
     useEffect(() => {
         try {
-            const item = window.localStorage.getItem(key);
-            if (item) {
-                setStoredValue(JSON.parse(item));
+            if (typeof window !== 'undefined') {
+                const item = window.localStorage.getItem(key);
+                if (item) {
+                    setStoredValue(JSON.parse(item));
+                }
             }
         }
         catch (error) {

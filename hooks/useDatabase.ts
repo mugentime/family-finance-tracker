@@ -21,7 +21,7 @@ function useDatabase<T>(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const result = await response.json() as T;
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -51,7 +51,7 @@ function useDatabase<T>(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const result = await response.json() as T;
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

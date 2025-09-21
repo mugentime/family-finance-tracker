@@ -1,0 +1,20 @@
+RAILWAY SERVICE BACKUP - Dineritou Project
+============================================
+Project ID: 4266f510-2c15-4cc5-b8bf-47adf47662f0
+Service ID: 083dea73-dbd0-47c0-9877-ad70a6be308f
+Domain: dineritou-production.up.railway.app
+
+ENVIRONMENT VARIABLES:
+- API_KEY=AIzaSyCDQmAxiCI_mzi8jtjOspqO3zq1QDi0a0g
+- DATABASE_URL=postgresql://postgres:VDzkYXlsxyxdCIiGkzDpxQlFUsSIhnhS@postgres.railway.internal:5432/railway
+- GEMINI_API_KEY=AIzaSyCDQmAxiCI_mzi8jtjOspqO3zq1QDi0a0g
+- NODE_ENV=production
+- TELEGRAM_BOT_TOKEN=7467500074:AAEdbtquadLIqPhI3ExU429AlUA9xboc7Lw
+
+CONFIGURATIONS:
+- railway.toml: startCommand = "node test.js", healthcheck enabled
+- nixpacks.toml: Node.js 20.x, npm ci install, test.js start
+- Domain configured: dineritou-production.up.railway.app
+
+ISSUE: "No deployments found" error despite multiple deployment attempts
+SOLUTION: Create new service to resolve Railway platform issue

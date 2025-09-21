@@ -1,6 +1,6 @@
 import { eq, desc } from 'drizzle-orm';
-import { db } from '../database/connection.js';
-import * as schema from '../database/schema.js';
+import { db } from '../database/connection';
+import * as schema from '../database/schema';
 // Helper function to convert database results to app types
 const mapDbMember = (dbMember) => ({
     id: dbMember.id.toString(),

@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "db:migrate": "drizzle-kit migrate",
     "compile": "npx tsc",
-    "render-build": "npm ci && npm run compile && npm run build"
+    "render-build": "npm ci && npm run compile && npm run build",
+    "netlify-build": "npm ci && npm run compile && npm run build"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",
@@ -33,5 +34,8 @@
     "react-dom": "^19.1.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.11"
+  },
+  "devDependencies": {
+    "terser": "^5.44.0"
   }
 }

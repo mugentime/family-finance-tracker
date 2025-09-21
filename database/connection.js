@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from './schema.js';
+import * as schema from './schema';
 // Create connection pool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -28,25 +28,6 @@ export const testConnection = async () => {
         return false;
     }
 };
-// Health check function
-export const getDatabaseHealth = async () => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query('SELECT version(), now()');
-        client.release();
-        return {
-            status: 'healthy',
-            version: result.rows[0].version,
-            timestamp: result.rows[0].now
-        };
-    } catch (error) {
-        return {
-            status: 'unhealthy',
-            error: error.message
-        };
-    }
-};
-
 // Graceful shutdown
 export const closeConnection = async () => {
     try {

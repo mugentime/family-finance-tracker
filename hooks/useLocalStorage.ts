@@ -4,8 +4,11 @@ import { useState, useEffect } from 'react';
 function useLocalStorage<T,>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      if (typeof window !== 'undefined') {
+        const item = window.localStorage.getItem(key);
+        return item ? JSON.parse(item) : initialValue;
+      }
+      return initialValue;
     } catch (error) {
       console.error(error);
       return initialValue;
@@ -16,7 +19,9 @@ function useLocalStorage<T,>(key: string, initialValue: T): [T, React.Dispatch<R
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      }
     } catch (error) {
       console.error(error);
     }
@@ -24,9 +29,11 @@ function useLocalStorage<T,>(key: string, initialValue: T): [T, React.Dispatch<R
 
   useEffect(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      if (item) {
-        setStoredValue(JSON.parse(item));
+      if (typeof window !== 'undefined') {
+        const item = window.localStorage.getItem(key);
+        if (item) {
+          setStoredValue(JSON.parse(item));
+        }
       }
     } catch (error) {
       console.error(error)

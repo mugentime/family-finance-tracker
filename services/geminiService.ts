@@ -7,14 +7,14 @@ export const generateDescription = async (productName: string, keywords: string)
     });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+        const errorData = await response.json().catch(() => ({ error: 'Server error' })) as { error?: string };
         if (process.env.NODE_ENV !== 'production') {
             console.error("API Error:", errorData.error);
         }
         throw new Error(errorData.error || 'Server error');
     }
 
-    const data = await response.json();
+    const data = await response.json() as { description?: string };
     return data.description || getFallbackDescription(productName, keywords);
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
@@ -38,14 +38,14 @@ export const generateImage = async (productName: string): Promise<string> => {
     });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Server error' }));
+        const errorData = await response.json().catch(() => ({ error: 'Server error' })) as { error?: string };
         if (process.env.NODE_ENV !== 'production') {
             console.error("API Error:", errorData.error);
         }
         throw new Error(errorData.error || 'Server error');
     }
 
-    const data = await response.json();
+    const data = await response.json() as { imageUrl?: string };
     return data.imageUrl || getFallbackImage(productName);
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
