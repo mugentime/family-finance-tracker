@@ -11,15 +11,7 @@
     "dev": "vite",
     "build": "vite build",
     "start": "node server.js",
-    "preview": "vite preview",
-    "compile": "npx tsc --skipLibCheck",
-    "lint": "echo 'Linting completed'",
-    "typecheck": "tsc --noEmit",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "drizzle-kit push:pg",
-    "db:migrate:safe": "node -e \"try { require('child_process').execSync('npm run db:migrate', {stdio: 'inherit'}); } catch(e) { console.warn('Database migration failed, continuing...', e.message); }\"",
-    "db:studio": "drizzle-kit studio",
-    "migrate-data": "node scripts/migrate-data.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",

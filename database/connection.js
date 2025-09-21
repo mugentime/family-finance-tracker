@@ -68,9 +68,38 @@ const initializeDatabase = async () => {
     }
 };
 
-// Initialize database on module load
-const { pool: initialPool, db: initialDb } = await initializeDatabase();
-export { initialPool as pool, initialDb as db };
+// Lazy database initialization - don't initialize at module load
+let _pool;
+let _db;
+
+export const getPool = async () => {
+    if (!_pool) {
+        const { pool } = await initializeDatabase();
+        _pool = pool;
+    }
+    return _pool;
+};
+
+export const getDb = async () => {
+    if (!_db) {
+        const { db } = await initializeDatabase();
+        _db = db;
+    }
+    return _db;
+};
+
+// Legacy exports for compatibility
+export const pool = new Proxy({}, {
+    get() {
+        throw new Error('Use getPool() instead of direct pool access');
+    }
+});
+
+export const db = new Proxy({}, {
+    get() {
+        throw new Error('Use getDb() instead of direct db access');
+    }
+});
 
 // Enhanced connection test with retry logic
 export const testConnection = async (retries = 3) => {
@@ -79,6 +108,7 @@ export const testConnection = async (retries = 3) => {
     while (attempt < retries) {
         try {
             connectionAttempts++;
+            const pool = await getPool();
             const client = await pool.connect();
             await client.query('SELECT 1');
             client.release();
@@ -107,9 +137,10 @@ export const testConnection = async (retries = 3) => {
     return false;
 };
 
-// Health check with detailed status
+// Health check with detailed status - graceful fallback
 export const getDatabaseHealth = async () => {
     try {
+        const pool = await getPool();
         const client = await pool.connect();
         const result = await client.query('SELECT version(), now()');
         client.release();
@@ -127,9 +158,9 @@ export const getDatabaseHealth = async () => {
         return {
             status: 'unhealthy',
             error: error.message,
-            totalConnections: pool?.totalCount || 0,
-            idleConnections: pool?.idleCount || 0,
-            waitingConnections: pool?.waitingCount || 0,
+            totalConnections: _pool?.totalCount || 0,
+            idleConnections: _pool?.idleCount || 0,
+            waitingConnections: _pool?.waitingCount || 0,
             connectionAttempts
         };
     }
@@ -138,10 +169,12 @@ export const getDatabaseHealth = async () => {
 // Graceful shutdown with enhanced cleanup
 export const closeConnection = async () => {
     try {
-        if (pool) {
+        if (_pool) {
             console.log('Closing database connections...');
-            await pool.end();
+            await _pool.end();
             console.log('Database connections closed successfully');
+            _pool = null;
+            _db = null;
         }
     }
     catch (error) {
