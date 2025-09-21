@@ -35,34 +35,36 @@ const getPoolConfig = () => {
 };
 
 // Create connection pool with error handling
-let pool;
-let db;
 let connectionAttempts = 0;
 const maxConnectionAttempts = 5;
 
 const initializeDatabase = async () => {
     try {
-        if (pool) {
-            return { pool, db };
+        if (_pool) {
+            return { pool: _pool, db: _db };
         }
 
-        pool = new Pool(getPoolConfig());
+        const newPool = new Pool(getPoolConfig());
 
         // Add pool error handlers
-        pool.on('error', (err) => {
+        newPool.on('error', (err) => {
             console.error('Unexpected database pool error:', err);
         });
 
-        pool.on('connect', () => {
+        newPool.on('connect', () => {
             if (process.env.NODE_ENV !== 'production') {
                 console.log('New database connection established');
             }
         });
 
         // Initialize Drizzle with the pool
-        db = drizzle(pool, { schema });
+        const newDb = drizzle(newPool, { schema });
 
-        return { pool, db };
+        // Set module-level variables
+        _pool = newPool;
+        _db = newDb;
+
+        return { pool: newPool, db: newDb };
     } catch (error) {
         console.error('Failed to initialize database pool:', error);
         throw error;

@@ -15,7 +15,14 @@
       "Bash(railway logs:*)",
       "Bash(railway status:*)",
       "Bash(railway up:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(railway domain:*)",
+      "WebFetch(domain:dineritou-production.up.railway.app)",
+      "Bash(railway deploy:*)",
+      "Bash(railway variables:*)",
+      "Bash(node server.js)",
+      "Bash(API_KEY=test TELEGRAM_BOT_TOKEN=test DATABASE_URL=postgresql://test:test@localhost:5432/test node server.js)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
