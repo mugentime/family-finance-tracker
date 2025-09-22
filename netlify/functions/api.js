@@ -98,20 +98,25 @@ export default async (req, context) => {
     console.log('DEBUG: Full URL:', url);
     console.log('DEBUG: Method:', method);
 
+    // Parse URL properly
+    const urlObj = new URL(url, 'https://dummy.com');
+    let urlPath = urlObj.pathname;
+
+    console.log('DEBUG: URL pathname:', urlPath);
+
     // Handle different URL patterns
-    let urlPath = url;
-    if (url.includes('/.netlify/functions/api')) {
-      urlPath = url.replace('/.netlify/functions/api', '');
-    } else if (url.includes('/api')) {
-      urlPath = url.replace('/api', '');
+    if (urlPath.includes('/.netlify/functions/api')) {
+      urlPath = urlPath.replace('/.netlify/functions/api', '');
+    } else if (urlPath.includes('/api')) {
+      urlPath = urlPath.replace('/api', '');
     }
 
-    // Handle case where path might be empty
+    // Handle case where path might be empty - default to members for testing
     if (urlPath === '' || urlPath === '/') {
-      urlPath = '/members'; // Default for testing
+      urlPath = '/members';
     }
 
-    console.log('DEBUG: Processed URL path:', urlPath);
+    console.log('DEBUG: Final processed path:', urlPath);
 
     // Members endpoints
     if (urlPath === '/members' || urlPath.endsWith('members')) {
