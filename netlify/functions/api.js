@@ -106,10 +106,15 @@ export default async (req, context) => {
       urlPath = url.replace('/api', '');
     }
 
+    // Handle case where path might be empty
+    if (urlPath === '' || urlPath === '/') {
+      urlPath = '/members'; // Default for testing
+    }
+
     console.log('DEBUG: Processed URL path:', urlPath);
 
     // Members endpoints
-    if (urlPath === '/members') {
+    if (urlPath === '/members' || urlPath.endsWith('members')) {
       if (method === 'GET') {
         const members = await sql`SELECT id, username, email, role, status, telegram_id FROM members`;
         return new Response(JSON.stringify(members), { status: 200, headers });

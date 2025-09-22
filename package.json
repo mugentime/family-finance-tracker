@@ -33,6 +33,7 @@
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.5",
     "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
     "node-telegram-bot-api": "^0.66.0",
     "pg": "^8.16.3",
     "react": "^19.1.1",
