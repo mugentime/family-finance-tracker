@@ -7,7 +7,7 @@ import ReportsScreen from './screens/ReportsScreen';
 import MembersScreen from './screens/MembersScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import { AppContextProvider, useAppContext } from './contexts/AppContext';
+import { ApiContextProvider, useApiContext } from './contexts/ApiContext';
 import SettingsScreen from './screens/SettingsScreen';
 import SummaryScreen from './screens/SummaryScreen';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -49,8 +49,37 @@ const MainLayout: React.FC = () => {
 };
 
 const AppContent: React.FC = () => {
-  const { currentUser } = useAppContext();
+  const { currentUser, loading, error } = useApiContext();
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zinc-900 mx-auto mb-4"></div>
+          <p className="text-slate-600">Cargando datos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center p-6 bg-white rounded-xl shadow-md max-w-md">
+          <div className="text-red-600 text-6xl mb-4">⚠️</div>
+          <h2 className="text-xl font-bold text-slate-800 mb-2">Error de Conexión</h2>
+          <p className="text-slate-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     if (authMode === 'login') {
@@ -66,9 +95,9 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <AppContextProvider>
+      <ApiContextProvider>
         <AppContent />
-      </AppContextProvider>
+      </ApiContextProvider>
     </ErrorBoundary>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAppContext } from '../contexts/AppContext';
+import { useApiContext } from '../contexts/ApiContext';
 import TransactionModal from '../components/TransactionModal';
 import { PlusIcon, EditIcon, TrashIcon, TelegramIcon } from '../components/Icons';
 import type { Transaction, PendingTransaction } from '../types';
@@ -94,7 +94,7 @@ const PendingTelegramTransactions: React.FC<{
 
 
 const TransactionsScreen: React.FC = () => {
-  const { transactions, addTransaction, updateTransaction, deleteTransaction, categories, members, currentUser } = useAppContext();
+  const { transactions, addTransaction, updateTransaction, deleteTransaction, categories, members, currentUser } = useApiContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState<Transaction | null>(null);
   const [pendingTxToApprove, setPendingTxToApprove] = useState<PendingTransaction | null>(null);
@@ -155,8 +155,8 @@ const TransactionsScreen: React.FC = () => {
     }
   };
   
-  const getCategory = (id: string) => categories.find(c => c.id === id);
-  const getMember = (id: string) => members.find(m => m.id === id);
+  const getCategory = (id: string | number) => categories.find(c => c.id.toString() === id?.toString());
+  const getMember = (id: string | number) => members.find(m => m.id.toString() === id?.toString());
 
   return (
     <div>
@@ -194,29 +194,39 @@ const TransactionsScreen: React.FC = () => {
                 </thead>
                 <tbody>
                 {transactions.map(t => {
-                    const category = getCategory(t.categoryId);
+                    // Use API response data (category_name, category_icon, username) or fallback to lookup
+                    const category = {
+                        name: (t as any).category_name || getCategory((t as any).category_id || t.categoryId)?.name,
+                        icon: (t as any).category_icon || getCategory((t as any).category_id || t.categoryId)?.icon || '📁'
+                    };
+                    const memberName = (t as any).username || getMember((t as any).member_id || t.memberId)?.username;
+
                     return (
                     <tr key={t.id} className="border-b hover:bg-slate-50">
                         <td className="p-4">
                         <div className="flex items-center">
-                            <span className="text-2xl mr-3">{category?.icon || '📁'}</span>
+                            <span className="text-2xl mr-3">{category.icon}</span>
                             <div>
                                 <p className="font-medium text-slate-800">{t.description}</p>
-                                <p className="text-xs text-slate-500">{getMember(t.memberId)?.username}</p>
+                                <p className="text-xs text-slate-500">{memberName}</p>
                             </div>
                         </div>
                         </td>
-                        <td className="p-4 text-sm text-slate-500">{category?.name}</td>
+                        <td className="p-4 text-sm text-slate-500">{category.name}</td>
                         <td className="p-4 text-sm text-slate-500">{new Date(t.date).toLocaleDateString()}</td>
                         <td className={`p-4 text-sm font-bold text-right ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                        {t.type === 'income' ? '+' : '-'}${t.amount.toFixed(2)}
+                        {t.type === 'income' ? '+' : '-'}${parseFloat(t.amount.toString()).toFixed(2)}
                         </td>
                         <td className="p-4 text-center">
                         <div className="flex justify-center items-center space-x-2">
-                            <button onClick={() => openModal(t)} className="p-2 text-slate-500 hover:text-zinc-700 rounded-full hover:bg-slate-100">
+                            <button onClick={() => openModal({
+                                ...t,
+                                categoryId: (t as any).category_id || t.categoryId,
+                                memberId: (t as any).member_id || t.memberId
+                            })} className="p-2 text-slate-500 hover:text-zinc-700 rounded-full hover:bg-slate-100">
                             <EditIcon className="h-5 w-5" />
                             </button>
-                            <button onClick={() => deleteTransaction(t.id)} className="p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100">
+                            <button onClick={() => deleteTransaction(t.id.toString())} className="p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100">
                             <TrashIcon className="h-5 w-5" />
                             </button>
                         </div>
@@ -235,29 +245,38 @@ const TransactionsScreen: React.FC = () => {
         {/* Mobile Card View */}
         <div className="md:hidden space-y-4">
             {transactions.map(t => {
-                const category = getCategory(t.categoryId);
-                const member = getMember(t.memberId);
+                // Use API response data or fallback to lookup
+                const category = {
+                    name: (t as any).category_name || getCategory((t as any).category_id || t.categoryId)?.name || 'Sin categoría',
+                    icon: (t as any).category_icon || getCategory((t as any).category_id || t.categoryId)?.icon || '📁'
+                };
+                const memberName = (t as any).username || getMember((t as any).member_id || t.memberId)?.username;
+
                 return (
                     <div key={t.id} className="bg-white rounded-2xl shadow-md p-4 space-y-3">
                         <div className="flex justify-between items-start">
                             <div className="flex items-center gap-3">
-                                <span className="text-3xl">{category?.icon || '📁'}</span>
+                                <span className="text-3xl">{category.icon}</span>
                                 <div>
                                     <p className="font-bold text-slate-800">{t.description}</p>
-                                    <p className="text-sm text-slate-500">{category?.name || 'Sin categoría'}</p>
+                                    <p className="text-sm text-slate-500">{category.name}</p>
                                 </div>
                             </div>
                             <div className={`text-lg font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                {t.type === 'income' ? '+' : '-'}${t.amount.toFixed(2)}
+                                {t.type === 'income' ? '+' : '-'}${parseFloat(t.amount.toString()).toFixed(2)}
                             </div>
                         </div>
                         <div className="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
-                            <p>{new Date(t.date).toLocaleDateString()}{member ? ` por ${member.username}` : ''}</p>
+                            <p>{new Date(t.date).toLocaleDateString()}{memberName ? ` por ${memberName}` : ''}</p>
                             <div className="flex items-center space-x-1">
-                                <button onClick={() => openModal(t)} className="p-3 min-h-[44px] min-w-[44px] text-slate-500 hover:text-zinc-700 rounded-full hover:bg-slate-100 active:bg-slate-200 touch-target">
+                                <button onClick={() => openModal({
+                                    ...t,
+                                    categoryId: (t as any).category_id || t.categoryId,
+                                    memberId: (t as any).member_id || t.memberId
+                                })} className="p-3 min-h-[44px] min-w-[44px] text-slate-500 hover:text-zinc-700 rounded-full hover:bg-slate-100 active:bg-slate-200 touch-target">
                                     <EditIcon className="h-4 w-4" />
                                 </button>
-                                <button onClick={() => deleteTransaction(t.id)} className="p-3 min-h-[44px] min-w-[44px] text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100 active:bg-red-50 touch-target">
+                                <button onClick={() => deleteTransaction(t.id.toString())} className="p-3 min-h-[44px] min-w-[44px] text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100 active:bg-red-50 touch-target">
                                     <TrashIcon className="h-4 w-4" />
                                 </button>
                             </div>
