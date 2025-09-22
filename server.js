@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Database imports
-import { testConnection, closeConnection, getDatabaseHealth } from './database/connection.js';
+import { testConnection, closeConnection, initializeDatabase } from './database/connection.js';
 import {
   MembersService,
   CategoriesService,
@@ -463,15 +463,28 @@ const startServer = async () => {
     // Initialize database asynchronously after server starts
     setTimeout(async () => {
       try {
+        // First initialize database schema if using SQLite
+        const schemaInitialized = await initializeDatabase();
+        if (schemaInitialized) {
+          console.log('Database schema initialized');
+        }
+
+        // Test database connection
         const dbConnected = await testConnection();
         if (dbConnected) {
-          await DatabaseService.initializeData();
-          console.log('Database initialized successfully');
+          console.log('Database connected successfully');
+          try {
+            await DatabaseService.initializeData();
+            console.log('Database data initialized successfully');
+          } catch (initError) {
+            console.warn('Database data initialization failed, continuing:', initError.message);
+          }
         } else {
           console.warn('Database connection failed - running without database');
         }
       } catch (error) {
         console.error('Database initialization error:', error.message);
+        console.warn('Continuing without database...');
       }
     }, 1000);
 
