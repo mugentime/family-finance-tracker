@@ -15,10 +15,13 @@
     "db:migrate": "drizzle-kit migrate",
     "compile": "npx tsc",
     "render-build": "npm ci && npm run compile && npm run build",
-    "netlify-build": "npm ci && npm run compile && npm run build"
+    "netlify-build": "npm ci && npm run compile && npm run build",
+    "netlify-db-init": "node scripts/init-netlify-db.js"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",
+    "@neondatabase/serverless": "^1.0.1",
+    "@netlify/blobs": "^10.0.10",
     "@types/express": "^4.17.21",
     "@types/node-telegram-bot-api": "^0.64.6",
     "@types/pg": "^8.15.5",
