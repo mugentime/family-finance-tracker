@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Database imports
-import { testConnection, closeConnection, initializeDatabase } from './database/connection.js';
+import { testConnection, closeConnection } from './database/connection.js';
 import {
   MembersService,
   CategoriesService,
@@ -246,6 +246,24 @@ app.post('/api/confirm-transaction', (req, res) => {
     res.status(200).json({ message: 'Transacción confirmada y eliminada de pendientes.' });
 });
 
+// Helper function to get database health
+async function getDatabaseHealth() {
+    try {
+        const count = await TransactionsService.count();
+        return {
+            status: 'healthy',
+            transactionCount: count,
+            message: 'Database is operational'
+        };
+    } catch (error) {
+        return {
+            status: 'unhealthy',
+            message: 'Database error',
+            error: error.message
+        };
+    }
+}
+
 // Health check endpoint for Railway - Always responds OK for startup reliability
 app.get('/health', async (req, res) => {
     const startTime = Date.now();
@@ -442,14 +460,21 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve static files from the React app - MUST come after API routes
+// Only serve static files for production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
 
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
+  // The "catchall" handler: for any request that doesn't
+  // match API routes, send back React's index.html file.
+  app.get('*', (req, res) => {
+    // Don't catch API routes - they should have been handled above
+    if (req.path.startsWith('/api') || req.path === '/health') {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 
 // Initialize database and start server
@@ -463,12 +488,6 @@ const startServer = async () => {
     // Initialize database asynchronously after server starts
     setTimeout(async () => {
       try {
-        // First initialize database schema if using SQLite
-        const schemaInitialized = await initializeDatabase();
-        if (schemaInitialized) {
-          console.log('Database schema initialized');
-        }
-
         // Test database connection
         const dbConnected = await testConnection();
         if (dbConnected) {
