@@ -95,14 +95,10 @@ export default async (req, context) => {
     await initializeDatabase();
 
     const { url, method } = req;
-    console.log('DEBUG: Full URL:', url);
-    console.log('DEBUG: Method:', method);
 
     // Parse URL properly
     const urlObj = new URL(url, 'https://dummy.com');
     let urlPath = urlObj.pathname;
-
-    console.log('DEBUG: URL pathname:', urlPath);
 
     // Handle different URL patterns
     if (urlPath.includes('/.netlify/functions/api')) {
@@ -111,12 +107,13 @@ export default async (req, context) => {
       urlPath = urlPath.replace('/api', '');
     }
 
-    // Handle case where path might be empty - default to members for testing
+    // Handle case where path might be empty
     if (urlPath === '' || urlPath === '/') {
-      urlPath = '/members';
+      return new Response(
+        JSON.stringify({ error: 'No endpoint specified', available: ['/members', '/categories', '/transactions'] }),
+        { status: 400, headers }
+      );
     }
-
-    console.log('DEBUG: Final processed path:', urlPath);
 
     // Members endpoints
     if (urlPath === '/members' || urlPath.endsWith('members')) {
