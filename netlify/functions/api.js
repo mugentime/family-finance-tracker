@@ -95,7 +95,18 @@ export default async (req, context) => {
     await initializeDatabase();
 
     const { url, method } = req;
-    const urlPath = url.replace('/api', '');
+    console.log('DEBUG: Full URL:', url);
+    console.log('DEBUG: Method:', method);
+
+    // Handle different URL patterns
+    let urlPath = url;
+    if (url.includes('/.netlify/functions/api')) {
+      urlPath = url.replace('/.netlify/functions/api', '');
+    } else if (url.includes('/api')) {
+      urlPath = url.replace('/api', '');
+    }
+
+    console.log('DEBUG: Processed URL path:', urlPath);
 
     // Members endpoints
     if (urlPath === '/members') {
