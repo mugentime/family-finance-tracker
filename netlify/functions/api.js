@@ -77,14 +77,17 @@ const initializeDatabase = async () => {
 };
 
 // API Routes
-export default async (req, res) => {
+export default async (req, context) => {
   // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
+  };
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return new Response(null, { status: 200, headers });
   }
 
   try {
@@ -98,16 +101,17 @@ export default async (req, res) => {
     if (urlPath === '/members') {
       if (method === 'GET') {
         const members = await sql`SELECT id, username, email, role, status, telegram_id FROM members`;
-        return res.json(members);
+        return new Response(JSON.stringify(members), { status: 200, headers });
       }
       if (method === 'POST') {
-        const { username, email, password, role = 'member' } = req.body;
+        const body = await req.json();
+        const { username, email, password, role = 'member' } = body;
         const result = await sql`
           INSERT INTO members (username, email, password, role, status)
           VALUES (${username}, ${email}, ${password}, ${role}, 'active')
           RETURNING id, username, email, role, status, telegram_id
         `;
-        return res.json(result[0]);
+        return new Response(JSON.stringify(result[0]), { status: 200, headers });
       }
     }
 
@@ -115,16 +119,17 @@ export default async (req, res) => {
     if (urlPath === '/categories') {
       if (method === 'GET') {
         const categories = await sql`SELECT * FROM transaction_categories ORDER BY name`;
-        return res.json(categories);
+        return new Response(JSON.stringify(categories), { status: 200, headers });
       }
       if (method === 'POST') {
-        const { name, type, icon } = req.body;
+        const body = await req.json();
+        const { name, type, icon } = body;
         const result = await sql`
           INSERT INTO transaction_categories (name, type, icon)
           VALUES (${name}, ${type}, ${icon})
           RETURNING *
         `;
-        return res.json(result[0]);
+        return new Response(JSON.stringify(result[0]), { status: 200, headers });
       }
     }
 
@@ -138,16 +143,17 @@ export default async (req, res) => {
           LEFT JOIN members m ON t.member_id = m.id
           ORDER BY t.date DESC
         `;
-        return res.json(transactions);
+        return new Response(JSON.stringify(transactions), { status: 200, headers });
       }
       if (method === 'POST') {
-        const { description, amount, type, categoryId, memberId, date } = req.body;
+        const body = await req.json();
+        const { description, amount, type, categoryId, memberId, date } = body;
         const result = await sql`
           INSERT INTO transactions (description, amount, type, category_id, member_id, date)
           VALUES (${description}, ${amount}, ${type}, ${categoryId}, ${memberId}, ${date})
           RETURNING *
         `;
-        return res.json(result[0]);
+        return new Response(JSON.stringify(result[0]), { status: 200, headers });
       }
     }
 
@@ -155,7 +161,8 @@ export default async (req, res) => {
     if (urlPath.startsWith('/transactions/')) {
       const id = urlPath.split('/')[2];
       if (method === 'PUT') {
-        const { description, amount, type, categoryId, date } = req.body;
+        const body = await req.json();
+        const { description, amount, type, categoryId, date } = body;
         const result = await sql`
           UPDATE transactions
           SET description = ${description}, amount = ${amount}, type = ${type},
@@ -163,19 +170,22 @@ export default async (req, res) => {
           WHERE id = ${id}
           RETURNING *
         `;
-        return res.json(result[0]);
+        return new Response(JSON.stringify(result[0]), { status: 200, headers });
       }
       if (method === 'DELETE') {
         await sql`DELETE FROM transactions WHERE id = ${id}`;
-        return res.json({ success: true });
+        return new Response(JSON.stringify({ success: true }), { status: 200, headers });
       }
     }
 
     // Default response
-    return res.status(404).json({ error: 'Endpoint not found' });
+    return new Response(JSON.stringify({ error: 'Endpoint not found' }), { status: 404, headers });
 
   } catch (error) {
     console.error('API Error:', error);
-    return res.status(500).json({ error: 'Internal server error', message: error.message });
+    return new Response(
+      JSON.stringify({ error: 'Internal server error', message: error.message }),
+      { status: 500, headers }
+    );
   }
 };
