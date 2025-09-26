@@ -238,10 +238,16 @@ export const ApiContextProvider: React.FC<{ children: ReactNode }> = ({ children
 
   // Mock functions for features not yet connected to API
   const approveMember = (memberId: string) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      throw new Error('Forbidden: Admin access required');
+    }
     setMembers(prev => prev.map(u => u.id === memberId ? { ...u, status: 'approved' } : u));
   };
 
   const deleteMember = (memberId: string) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      throw new Error('Forbidden: Admin access required');
+    }
     setMembers(prev => prev.filter(u => u.id !== memberId));
   };
 
