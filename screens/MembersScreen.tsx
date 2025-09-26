@@ -1,11 +1,27 @@
 import React from 'react';
-import { useAppContext } from '../contexts/AppContext';
+import { useApiContext } from '../contexts/ApiContext';
 import { TrashIcon } from '../components/Icons';
 
 const MembersScreen: React.FC = () => {
-  const { members, approveMember, deleteMember, currentUser } = useAppContext();
+  const { members, approveMember, deleteMember, currentUser } = useApiContext();
 
   const otherMembers = members.filter(u => u.id !== currentUser?.id);
+
+  const handleDeleteMember = async (memberId: string) => {
+    try {
+      deleteMember(memberId);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Error al eliminar miembro');
+    }
+  };
+
+  const handleApproveMember = async (memberId: string) => {
+    try {
+      approveMember(memberId);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Error al aprobar miembro');
+    }
+  };
 
   const statusBadge = (status: 'approved' | 'pending') => {
     switch (status) {
@@ -46,14 +62,14 @@ const MembersScreen: React.FC = () => {
                     <div className="flex justify-center items-center space-x-2">
                       {user.status === 'pending' && (
                         <button
-                          onClick={() => approveMember(user.id)}
+                          onClick={() => handleApproveMember(user.id)}
                           className="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-lg hover:bg-green-600"
                         >
                           Aprobar
                         </button>
                       )}
                       <button 
-                        onClick={() => deleteMember(user.id)} 
+                        onClick={() => handleDeleteMember(user.id)} 
                         className="p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100 transition-colors"
                         aria-label={`Eliminar ${user.username}`}
                       >
@@ -86,11 +102,11 @@ const MembersScreen: React.FC = () => {
                        <p className="text-sm text-slate-500 capitalize">Rol: <span className="font-semibold text-slate-700">{user.role}</span></p>
                        <div className="flex items-center space-x-2">
                           {user.status === 'pending' && (
-                              <button onClick={() => approveMember(user.id)} className="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-lg hover:bg-green-600">
+                              <button onClick={() => handleApproveMember(user.id)} className="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-lg hover:bg-green-600">
                                   Aprobar
                               </button>
                           )}
-                          <button onClick={() => deleteMember(user.id)} className="p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100 transition-colors" aria-label={`Eliminar ${user.username}`}>
+                          <button onClick={() => handleDeleteMember(user.id)} className="p-2 text-slate-500 hover:text-red-600 rounded-full hover:bg-slate-100 transition-colors" aria-label={`Eliminar ${user.username}`}>
                               <TrashIcon className="h-5 w-5" />
                           </button>
                       </div>
