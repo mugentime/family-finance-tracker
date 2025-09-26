@@ -1,6 +1,6 @@
 import { eq, desc } from 'drizzle-orm';
-import { db } from '../database/connection.js';
-import * as schema from '../database/schema.js';
+import { db } from '../database/connection';
+import * as schema from '../database/schema';
 // Helper function to convert database results to app types
 const mapDbMember = (dbMember) => ({
     id: dbMember.id.toString(),
@@ -139,10 +139,6 @@ export class TransactionsService {
     static async delete(id) {
         const result = await db.delete(schema.transactions).where(eq(schema.transactions.id, parseInt(id)));
         return (result.rowCount ?? 0) > 0;
-    }
-    static async count() {
-        const results = await db.select().from(schema.transactions);
-        return results.length;
     }
 }
 // Budgets Service
